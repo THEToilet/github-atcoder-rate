@@ -32,8 +32,15 @@ func circle(w http.ResponseWriter, req *http.Request) {
 	r := width / 4
 
 	canvas.Start(width, height)
+
+	// NOTE: 背景
 	canvas.Gstyle("fill:white")
 	canvas.Rect(0, 0, width, height)
+	canvas.Gend()
+
+	// NOTE: 外枠
+	canvas.Gstyle("fill:none;stroke:black")
+	canvas.Roundrect(0, 0, width, height, 10, 10)
 	canvas.Gend()
 
 	canvas.Gstyle(string("fill:" + model.Gray))
@@ -47,6 +54,10 @@ func circle(w http.ResponseWriter, req *http.Request) {
 
 	canvas.Gstyle("fill:white")
 	canvas.Circle(width/2, height/2, 90)
+	canvas.Gend()
+
+	canvas.Gstyle("fill:black")
+	canvas.Text(width/2, height/2, "730")
 	canvas.Gend()
 
 	canvas.Gend()
