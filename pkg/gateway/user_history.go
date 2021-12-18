@@ -25,6 +25,7 @@ func NewUserHistoryHandler(drawSVGUseCase *application.DrawSVGUseCase, logger *z
 
 func (u *UserHistoryHandler) drawRating(writer http.ResponseWriter, request *http.Request) {
 
+	u.logger.Info().Msg("/svg Access")
 	query := request.URL.Query()
 	name := query.Get("name")
 	u.logger.Info().Interface("name", name).Msg(name)
