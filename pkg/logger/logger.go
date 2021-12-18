@@ -2,7 +2,7 @@ package logger
 
 import (
 	"fmt"
-	"g-sig/pkg/config"
+	"github-program-rate/pkg/config"
 	"github.com/rs/zerolog"
 	"os"
 	"strings"
