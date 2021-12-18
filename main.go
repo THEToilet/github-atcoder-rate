@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github-program-rate/pkg/config"
+	"github-program-rate/pkg/domain/application"
 	"github-program-rate/pkg/gateway"
 	logger2 "github-program-rate/pkg/logger"
 	"github.com/rs/zerolog"
@@ -19,7 +20,7 @@ var (
 
 func init() {
 
-	file, err := os.Open("g-sig.conf")
+	file, err := os.Open("rate.conf")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -50,9 +51,15 @@ func main() {
 		return
 	}
 
+	// UseCase
+	drawSVGUseCase := application.NewDrawSVGUseCase(logger)
+
+	// Controller
+	userHistoryHandler := gateway.NewUserHistoryHandler(drawSVGUseCase, logger)
+
 	logger.Info().Str("Addr", ":8080").Msg("Serve is running")
 
-	server := gateway.NewServer(logger)
+	server := gateway.NewServer(logger, userHistoryHandler)
 	if err := server.ListenAndServe(); err != nil {
 		logger.Fatal().Msg("ListenAndServe:")
 	}
