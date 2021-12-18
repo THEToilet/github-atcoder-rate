@@ -57,11 +57,10 @@ func main() {
 	// Controller
 	userHistoryHandler := gateway.NewUserHistoryHandler(drawSVGUseCase, logger)
 
-	logger.Info().Str("Addr", ":8080").Msg("Serve is running")
+	logger.Info().Str("Addr", os.Getenv("PORT")).Msg("Serve is running")
 
 	server := gateway.NewServer(logger, userHistoryHandler)
 	if err := server.ListenAndServe(); err != nil {
-		logger.Fatal().Msg("ListenAndServe:")
+		logger.Fatal().Err(err).Msg("ListenAndServe:Error")
 	}
-
 }
