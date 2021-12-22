@@ -95,26 +95,27 @@ func (d *DrawSVGUseCase) Draw(name string, rate int32, highestRating int32, canv
 	canvas.Circle(cx, cy, 45)
 	canvas.Gend()
 
-	// NOTE: レート
-	canvas.Gstyle("font-size:200%")
-	rateStr := strconv.Itoa(int(rate))
-	canvas.Text(width/2-40, 160, rateStr, "fill:black;font-family:Meiryo;font-wight:bold")
-	canvas.Gend()
-
-	// NOTE: ユーザネーム
-	canvas.Gstyle("fill:black")
-	canvas.Text(width-90, height-30, name)
-	canvas.Gend()
-
 	// NOTE: AtCoder Rating
-	canvas.Gstyle("fill:black;font-size:20pt")
-	canvas.Text(100, 45, "AtCoder Rating")
+	canvas.Gstyle("fill:black;font-size:20pt;font-family:arial;font-weight:bold")
+	canvas.Text(cx, 30, "AtCoder Rating", "x:50%;y:50%;text-anchor:middle;dominant-baseline:central")
+	canvas.Gend()
+
+	// NOTE: レート
+	canvas.Gstyle("font-weight:bold;" + string("fill:"+d.judgeColor(rate)))
+	rateStr := strconv.Itoa(int(rate))
+	canvas.Text(cx, cy, rateStr, "font-family:arial;x:50%;y:50%;text-anchor:middle;dominant-baseline:central;font-size:20pt")
 	canvas.Gend()
 
 	// NOTE: Highest Rating
 	d.logger.Info().Interface("highestRating", highestRating).Msg("")
-	canvas.Gstyle("fill:black;font-size:30pt")
-	canvas.Text(width-270, height-30, strconv.Itoa(int(highestRating)))
+	canvas.Gstyle("font-family:arial;font-weight:bold")
+	canvas.Text(width/6, height-height/4, "Highest", "x:50%;y:50%;text-anchor:middle;dominant-baseline:central;font-size:10pt")
+	canvas.Text(width/6, height-height/8, strconv.Itoa(int(highestRating)), "x:50%;y:50%;text-anchor:middle;dominant-baseline:central;font-size:20pt;fill:"+string(d.judgeColor(highestRating)))
+	canvas.Gend()
+
+	// NOTE: ユーザネーム
+	canvas.Gstyle("fill:black;font-family:arial;font-weight:bold")
+	canvas.Text(width-width/6, height-height/8, name, "x:50%;y:50%;text-anchor:middle;dominant-baseline:central")
 	canvas.Gend()
 
 	canvas.Gend()
