@@ -19,7 +19,8 @@ func NewDrawSVGUseCase(logger *zerolog.Logger) *DrawSVGUseCase {
 	}
 }
 
-func (d *DrawSVGUseCase) Draw(name string, rate int32, canvas *svg.SVG) {
+func (d *DrawSVGUseCase) Draw(name string, rate int32, highestRating int32, canvas *svg.SVG) {
+
 	d.logger.Info().Interface("name", name).Msg("")
 	d.logger.Info().Interface("rate", rate).Msg("")
 
@@ -29,8 +30,8 @@ func (d *DrawSVGUseCase) Draw(name string, rate int32, canvas *svg.SVG) {
 	d.logger.Info().Interface("percentPre", percentPre).Msg("")
 	d.logger.Info().Interface("percent", percent).Msg("")
 
-	width := 500
-	height := 300
+	width := 300
+	height := 200
 
 	canvas.Start(width, height)
 	canvas.Gstyle("")
@@ -40,24 +41,22 @@ func (d *DrawSVGUseCase) Draw(name string, rate int32, canvas *svg.SVG) {
 	canvas.Rect(0, 0, width, height)
 	canvas.Gend()
 
+	corner := 15
 	// NOTE: 外枠
-
-	corner := 10
-
-	//canvas.Gstyle("fill:black;stroke:black;stroke-width:5;stroke-linecap:round")
-	canvas.Gstyle("fill:black")
-	canvas.Roundrect(0, 0, width, height, corner, corner)
+	canvas.Gstyle("fill:gray;stroke-linecap:round")
+	canvas.Roundrect(0, 0, width, height, corner+3, corner+3)
 	canvas.Gend()
 
-	canvas.Gstyle("fill:white")
+	// NOTE: 一番下の裏地
+	canvas.Gstyle("fill:white;stroke-linecap:round;stroke-width:2;stroke:white")
 	canvas.Roundrect(0+2, 0+2, width-5, height-5, corner, corner)
 	canvas.Gend()
 
 	// NOTE: cx: center-x, cy: center-y
 	cx := width / 2
-	cy := height / 2
+	cy := height/2 + 20
 	// NOTE: 半径
-	r := width / 4
+	r := width / 5
 
 	// REFERENCE : https://webkatu.com/20150127-draw-pie-chart-in-svg/
 	// NOTE: 円の終わりの角度
@@ -81,11 +80,9 @@ func (d *DrawSVGUseCase) Draw(name string, rate int32, canvas *svg.SVG) {
 		largeArcFlag = 1
 	}
 
-	canvas.Gstyle(string("fill:"+d.judgeColor(rate)) + ";stroke:black;stroke-width:3")
-	//canvas.TranslateRotate(cx, cy, -angle)
+	canvas.Gstyle(string("fill:"+d.judgeColor(rate)) + ";stroke:black;stroke-width:1")
 	// NOTE: sweepはfalseで反時計回り
 	// NOTE: 第五引数は円弧の回転度なので必要ない
-	//canvas.Arc(sx, sy, r, r, 0, largeArcFlag, false, int(ex), int(ey),"closepath:Z;Z:")
 	move := fmt.Sprintf("M%d %d ", cx, cy)
 	line := fmt.Sprintf("L%d %d ", sx, sy)
 	arc := fmt.Sprintf("A%d %d 0 %d 0 %f %f", r, r, largeArcFlag, ex, ey)
@@ -94,12 +91,12 @@ func (d *DrawSVGUseCase) Draw(name string, rate int32, canvas *svg.SVG) {
 	canvas.Gend()
 
 	// NOTE: 中心の白い円
-	canvas.Gstyle("fill:white;stroke:black;stroke-width:3")
-	canvas.Circle(width/2, height/2, 100)
+	canvas.Gstyle("fill:white;stroke:black;stroke-width:1")
+	canvas.Circle(cx, cy, 45)
 	canvas.Gend()
 
 	// NOTE: レート
-	canvas.Gstyle("font-size:30pt")
+	canvas.Gstyle("font-size:200%")
 	rateStr := strconv.Itoa(int(rate))
 	canvas.Text(width/2-40, 160, rateStr, "fill:black;font-family:Meiryo;font-wight:bold")
 	canvas.Gend()
@@ -110,8 +107,14 @@ func (d *DrawSVGUseCase) Draw(name string, rate int32, canvas *svg.SVG) {
 	canvas.Gend()
 
 	// NOTE: AtCoder Rating
-	canvas.Gstyle("fill:black;font-size:30pt")
+	canvas.Gstyle("fill:black;font-size:20pt")
 	canvas.Text(100, 45, "AtCoder Rating")
+	canvas.Gend()
+
+	// NOTE: Highest Rating
+	d.logger.Info().Interface("highestRating", highestRating).Msg("")
+	canvas.Gstyle("fill:black;font-size:30pt")
+	canvas.Text(width-270, height-30, strconv.Itoa(int(highestRating)))
 	canvas.Gend()
 
 	canvas.Gend()

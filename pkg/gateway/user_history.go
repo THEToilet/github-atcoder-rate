@@ -53,9 +53,20 @@ func (u *UserHistoryHandler) drawRating(writer http.ResponseWriter, request *htt
 			fmt.Println(err)
 		}
 
+		highersRating := u.highestRating(atCoderHistories)
+
 		u.logger.Info().Interface("history", atCoderHistories).Msg("")
 		u.logger.Info().Interface("rate", atCoderHistories[len(atCoderHistories)-1].NewRating).Msg("")
-		u.drawSVGUseCase.Draw(name, atCoderHistories[len(atCoderHistories)-1].NewRating, svg.New(writer))
+		u.drawSVGUseCase.Draw(name, atCoderHistories[len(atCoderHistories)-1].NewRating, highersRating, svg.New(writer))
 	}
+}
 
+func (u *UserHistoryHandler) highestRating(histories []data.History) int32 {
+	var highestRating int32
+	for _, history := range histories {
+		if history.NewRating > highestRating {
+			highestRating = history.NewRating
+		}
+	}
+	return highestRating
 }
