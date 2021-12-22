@@ -37,7 +37,7 @@ func (d *DrawSVGUseCase) Draw(name string, rate int32, highestRating int32, canv
 	canvas.Gstyle("")
 
 	// NOTE: 背景
-	canvas.Gstyle("fill:white")
+	canvas.Gstyle("fill:white;fill-opacity:1")
 	canvas.Rect(0, 0, width, height)
 	canvas.Gend()
 
