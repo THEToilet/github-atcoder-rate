@@ -10,7 +10,7 @@ import (
 func NewServer(logger *zerolog.Logger, userHistoryHandler *UserHistoryHandler) *http.Server {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/svg", userHistoryHandler.drawRating)
+	mux.HandleFunc("/v1/rate", userHistoryHandler.drawRating)
 	logger.Info().Msg(os.Getenv("PORT"))
 	server := &http.Server{
 		// NOTE: ここ変えるならクライアントも変えなければならない
