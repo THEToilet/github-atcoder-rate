@@ -26,7 +26,8 @@ func (d *DrawSVGUseCase) Draw(name string, rate int32, highestRating int32, canv
 
 	// NOTE: レートは400ごとに色が変わる
 	percentPre := rate - (rate/400)*400
-	percent := int32((float64(percentPre) / 400.0) * 100)
+	//percent := int32((float64(percentPre) / 400.0) * 100)
+	percent := 50
 	d.logger.Info().Interface("percentPre", percentPre).Msg("")
 	d.logger.Info().Interface("percent", percent).Msg("")
 
@@ -64,15 +65,20 @@ func (d *DrawSVGUseCase) Draw(name string, rate int32, highestRating int32, canv
 	d.logger.Info().Interface("endDeg", endDeg).Msg("")
 
 	// NOTE: 円弧の始まり
-	sx := cx + r*int(math.Sin(0.0))
-	sy := cy - r*int(math.Cos(0.0))
+	sx := cx
+	sy := cy - r
 	d.logger.Info().Interface("sx", sx).Interface("sy", sy).Msg("")
 	// NOTE: 円弧の終わり（時計回り）
-	ex := float64(cx) - float64(r)*math.Sin(endDeg*math.Pi/180.0)
-	ey := float64(cy) + float64(r)*math.Cos(endDeg*math.Pi/180.0)
+
+	//ex := float64(cx) - float64(r)*math.Sin(endDeg*math.Pi/180.0)
+	ex := float64(cx) - float64(r)*math.Sin(endDeg*(math.Pi/180.0) + (math.Pi / 2.0))
+	//ey := float64(cy) + float64(r)*math.Cos(endDeg*math.Pi/180.0)
+	ey := float64(cy) - float64(r)*math.Cos(endDeg*(math.Pi/180.0) + (math.Pi / 2.0))
+
 	d.logger.Info().Interface("eeex", math.Sin(endDeg*math.Pi/180.0)).Interface("eeey", math.Cos(endDeg*math.Pi/180.0)).Msg("")
 	d.logger.Info().Interface("ex", ex).Interface("ey", ey).Msg("")
-	d.logger.Info().Interface("ex", int(ex)).Interface("ey", int(ey)).Msg("")
+	d.logger.Info().Interface("int ex", int(ex)).Interface("int ey", int(ey)).Msg("")
+
 	var largeArcFlag int
 	if endDeg <= 180 {
 		largeArcFlag = 0
@@ -85,7 +91,7 @@ func (d *DrawSVGUseCase) Draw(name string, rate int32, highestRating int32, canv
 	// NOTE: 第五引数は円弧の回転度なので必要ない
 	move := fmt.Sprintf("M%d %d ", cx, cy)
 	line := fmt.Sprintf("L%d %d ", sx, sy)
-	arc := fmt.Sprintf("A%d %d 0 %d 0 %f %f", r, r, largeArcFlag, ex, ey)
+	arc := fmt.Sprintf("A%d %d 0 %d 1 %f %f", r, r, largeArcFlag, ex, ey)
 	close := " Z"
 	canvas.Path(move+line+arc+close, "stroke:black")
 	canvas.Gend()
